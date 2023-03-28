@@ -84,6 +84,11 @@ type Options struct {
 	BypassLockGuard bool
 	Dir             string
 }
+
+func (o Options) WithKeepL0InMemory(_ bool): Options{
+	return o
+}
+
 type Iterator struct {
 	prefix []byte
 	index  int
