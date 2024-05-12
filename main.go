@@ -85,7 +85,7 @@ type Options struct {
 	Dir             string
 }
 
-func (o Options) WithKeepL0InMemory(_ bool) Options{
+func (o Options) WithKeepL0InMemory(_ bool) Options {
 	return o
 }
 

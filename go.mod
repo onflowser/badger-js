@@ -1,4 +1,4 @@
-module github.com/bluesign/fakeBadger
+module github.com/onflowser/badger-js
 
 go 1.18
 
