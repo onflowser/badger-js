@@ -3,9 +3,15 @@ package badger
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/pkg/errors"
 	"strings"
 	"syscall/js"
+
+	"github.com/pkg/errors"
+)
+
+var (
+	ErrConflict = errors.New("Transaction Conflict. Please retry")
+	ErrRejected = errors.New("Value log GC request rejected")
 )
 
 // Await waits for the Promise to be resolved and returns the value
@@ -95,8 +101,12 @@ type Iterator struct {
 	length int
 	items  []*Item
 }
+
 type IteratorOptions struct {
-	Prefix []byte
+	Prefix         []byte
+	AllVersions    bool
+	PrefetchValues bool
+	Reverse        bool
 }
 
 var DefaultIteratorOptions = IteratorOptions{}
@@ -108,6 +118,11 @@ func (txn *Txn) Set(key, val []byte) error {
 	Set(hex.EncodeToString(key), hex.EncodeToString(val))
 	return nil
 }
+
+func (txn *Txn) Delete(key []byte) error {
+	panic("Not implemented")
+}
+
 func (db *DB) NewTransaction(update bool) *Txn {
 	return &Txn{}
 }
@@ -146,6 +161,18 @@ func (db *DB) NewWriteBatch() *WriteBatch {
 	return &WriteBatch{}
 }
 
+func (wb *WriteBatch) Set(key, val []byte) error {
+	panic("Not implemented")
+}
+
+func (wb *WriteBatch) Delete(key []byte) error {
+	panic("Not implemented")
+}
+
+func (wb *WriteBatch) Flush() error {
+	panic("Not implemented")
+}
+
 func (db *DB) View(fn func(txn *Txn) error) error {
 	return fn(&Txn{})
 }
@@ -172,6 +199,9 @@ type Item struct {
 	value []byte
 }
 
+func (i Iterator) ValidForPrefix(prefix []byte) bool {
+	panic("Not implemented")
+}
 func (it *Iterator) Item() *Item {
 	return it.items[it.index]
 }
@@ -200,6 +230,14 @@ var (
 
 func (item *Item) Key() []byte {
 	return item.key
+}
+
+func (item *Item) KeyCopy(dst []byte) []byte {
+	return safeCopy(dst, item.key)
+}
+
+func safeCopy(a, src []byte) []byte {
+	return append(a[:0], src...)
 }
 
 func (item *Item) Value(fn func(val []byte) error) error {
