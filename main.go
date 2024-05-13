@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Source: https://github.com/dgraph-io/badger/blob/ffd14f078e0bd07a62cdb6d381cfb13fdd977454/errors.go
 var (
 	ErrConflict = errors.New("Transaction Conflict. Please retry")
 	ErrRejected = errors.New("Value log GC request rejected")
@@ -95,6 +96,7 @@ func (o Options) WithKeepL0InMemory(_ bool) Options {
 	return o
 }
 
+// Source: https://github.com/dgraph-io/badger/blob/main/iterator.go
 type Iterator struct {
 	prefix []byte
 	index  int
@@ -154,6 +156,7 @@ func (txn *Txn) Get(key []byte) (item *Item, rerr error) {
 	return &Item{key: key, value: decodedByteArray}, nil
 }
 
+// Source: https://github.com/dgraph-io/badger/blob/main/batch.go
 type WriteBatch struct {
 }
 
